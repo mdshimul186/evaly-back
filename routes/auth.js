@@ -47,7 +47,7 @@ route.post('/login', (req,res)=>{
                 email: user.email,
                 role: user.role
             }
-            var token = jwt.sign({ userdetails, role: user.role }, 'secret');
+            var token = jwt.sign({ userdetails, role: user.role }, process.env.JWT_SECRET);
             
             res.json({token, user:userdetails})
             

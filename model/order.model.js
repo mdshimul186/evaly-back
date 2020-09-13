@@ -22,12 +22,8 @@ const orderSchema = new mongoose.Schema({
         default:"pending"
     },
     payment:{
-        status:{
-            type:String,
-            default:"unpaid"
-        },
-        transaction:{type:String, default:""}
-        
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'Payment'       
     },
     timeline:[{
         status:{type:String,default:"pending"},

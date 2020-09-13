@@ -27,6 +27,7 @@ function createCat(cat, parentId = null){
 
 route.post('/create',usersignin,admin, (req, res)=>{
     const {name, parentId} = req.body
+    console.log(req.body);
     let catobj = new Category({
         name,
         slug: slugify(name)
@@ -50,6 +51,20 @@ route.get('/',(req, res)=>{
          res.json({catlist})
     })
     .catch(err=>console.log(err))
+})
+
+
+route.delete('/delete/:id',(req, res)=>{
+    let array = req.params.id.split(',')
+console.log(array);
+Category.deleteMany({
+    _id:{
+        $in:array
+    }
+})
+.then(data=>{
+    res.json({success:true})
+})
 })
 
 

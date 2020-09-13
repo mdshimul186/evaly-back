@@ -6,27 +6,38 @@ const {usersignin, admin} = require('../middleware/authmiddleware')
 const multer = require('multer')
 const shortId = require('shortid')
 const path = require('path')
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, path.join(__dirname, '../uploads/'))
-    },
-    filename: function (req, file, cb) {
-      cb(null,shortId.generate().replace(/_/g, "-") + '-' +  file.originalname )
-    }
-  })
+// var storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//       cb(null, path.join(__dirname, '../uploads/'))
+//     },
+//     filename: function (req, file, cb) {
+//       cb(null,shortId.generate().replace(/_/g, "-") + '-' +  file.originalname )
+//     }
+//   })
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'Brands',
+    format: async (req, file) => 'png', // supports promises as well
+    public_id: (req, file) =>shortId.generate()+'-'+file.originalname,
+  },
+});
    
   var upload = multer({ storage: storage })
 
 
 route.post('/add',usersignin,admin,upload.single('brand'),(req, res)=>{
     const {name} = req.body
-    const files = req.file
+    const file = req.file
 
      let newbrand = new Brand({
          name,
          slug: slugify(name),
-         image: files.filename
+         image: file.path
      })
 
      newbrand.save()
